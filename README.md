@@ -7,3 +7,4 @@ QuartとかいうFlaskっぽいやつ使ってます
 →https://quart.palletsprojects.com/en/latest/
 
 分からないことがあったら聞いてください
+（答えられるとは言ってない）
