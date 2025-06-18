@@ -1,0 +1,274 @@
+@charset "utf-8";
+h1 {
+  	color: #326693;			/* 見出しテキストの色を指定する */
+	padding-left:10px;		/* ボックス内左側の余白を指定する */
+	border-left: 10px solid #31a9ee;	/* ボーダー左側のスタイルを指定する */
+  	border-bottom: 1px dashed #31a9ee; 	/* ボーダー下部のスタイルを指定する */
+}
+/*body font change*/
+body {
+    font-family: 'M PLUS 1p', sans-serif;
+}
+hr{
+    padding-top: 1px;
+    border: none;
+    border-bottom: 3px solid #333;
+}
+
+
+/*色選択用box*/
+.colorselecter1{
+    position: absolute;
+    top: 110px;
+    background-color: #DDDDDD;
+    width:1500px;
+    height:130px;
+    overflow: scroll;
+}
+.colorselecter2{
+    position: absolute;
+    top: 265px;
+    background-color: #DDDDDD;
+    width:1500px;
+    height:130px;
+    overflow: scroll;
+}
+[class^="btn"] {
+    border: 2px solid #000000;
+    background-color: #F8F8F8;
+    outline: 0;
+    width: 35px;
+    height: 35px;
+    margin: 3px; 
+    margin-bottom: 7px;
+    position: relative;
+    top : 3px;
+    left: 15px;
+    transition: background 0.s;
+}
+[class^="btn"].active{
+    background-color: #09ff84;
+}
+[class^="btn"].cue{
+    background-color: #ff0000;
+}
+[class^="btn"].loop{
+    background-color: #ffaa00;
+}
+[class^="btn"]:hover{
+    border: 2px #0000ff solid;
+    background: #00fbff;
+}
+
+
+/*ch1用*/
+.ch1{
+    position: absolute;
+    left: 0px;
+    top: 440px;
+    height: 300px;
+    width: 640px;
+}
+/*BPM用*/
+.BPM1{
+    position: absolute;
+    left: 210px;
+}
+/*ループ変更ch1*/
+.Select_loop_1{
+    position: absolute;
+    top: 45px;
+    left: 210px;
+    width: 150px;
+    height: 20px;
+}
+/*CUEからのループ*/
+.loopfromcue{
+    position: absolute;
+    left: 190px;
+    top: 10px;
+    width: 80px;
+}
+/*モード変更*/
+.select_mode_1{
+    position: absolute;
+    top: 110px;
+    left: 210px;
+    width: 150px;
+    height: 20px;
+}
+/*明るさ調整フェーダー*/
+.brightness_label_ch1{
+    position: absolute;
+    bottom: 0px;
+    left: 495px;
+}
+.brightness_ch1{
+    appearance: none;
+    width: 12px;
+    height: 255px;
+    border: 1px solid #333333;
+    border-radius: 9999px;
+    background: #377494;
+    writing-mode: vertical-rl;
+    direction: rtl;
+    cursor: pointer;
+    position: absolute;
+    left: 555px;
+    top: 0px;
+
+} 
+/* ツマミ：Chrome, Safari, Edge用 */
+[class^="brightne"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #333333;
+    border-radius: 9999px;
+    background: #06b6d4;
+    box-shadow: none;
+}  
+/*PLAY/PAUSEボタン*/
+.play_pause1 {
+    all: unset;
+    background-color: #02ff63;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 10px 20px;
+    min-width: 150px;
+    display: flex;
+    justify-content: center;
+    transition: all 0.05s ease-out;
+    position: absolute;
+    top: 200px;
+    left: 210px;
+}
+[class^="play_pause"]:hover {
+    background-color: #ff0000;
+}
+
+.reset_ch1{
+    position: absolute;
+    left: 0px;
+    top: 200px;
+}
+
+
+
+
+/*-------------------------CH2------------------------------------------------------------*/
+
+.ch2{
+    position: absolute;
+    top: 440px;
+    right: 0px;
+    height: 300px;
+    width: 670px;
+}
+/*BPM用*/
+.BPM2{
+    position: absolute;
+    left: 210px;
+}
+/*ループ変更ch2*/
+.select_loop_2{
+    position: absolute;
+    top: 45px;
+    left: 210px;
+    width: 150px;
+    height: 20px;
+}
+/*モード変更ch2*/
+.select_mode_2{
+    position: absolute;
+    top: 110px;
+    left: 210px;
+    width: 150px;
+    height: 20px;
+}
+
+/*明るさ調整フェーダー*/
+.brightness_label_ch2{
+    position: absolute;
+    bottom: 0px;
+    left: 40px;
+}
+.brightness_ch2{
+    appearance: none;
+    width: 12px;
+    height: 255px;
+    border: 1px solid #333333;
+    border-radius: 9999px;
+    background: #377494;
+    writing-mode: vertical-rl;
+    direction: rtl;
+    cursor: pointer;
+    position: absolute;
+    left : 100px;
+    top: 0px;
+}
+/*PLAY/PAUSEボタン*/
+.play_pause2 {
+    all: unset;
+    background-color: #02ff63;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 10px 20px;
+    min-width: 150px;
+    display: flex;
+    justify-content: center;
+    transition: all 0.05s ease-out;
+    position: absolute;
+    top: 200px;
+    left: 210px;
+} 
+
+.reset_ch2{
+    position: absolute;
+    right: 40px;
+    top: 210px;
+}
+
+
+/*---------------------file--------------------------*/
+
+.file{
+    position: absolute;
+    top: 440px;
+    left: 660px;
+    height: 300px;
+    width: 196px;
+}
+.selecter{
+    position: absolute;
+    left: 48px;
+}
+
+.load_ch1{
+    position: absolute;
+    top: 80px;
+    left: 0px;
+}
+
+.load_ch2{
+    position: absolute;
+    top: 80px;
+    right: 0px;
+}
+
+.export_ch1{
+    position: absolute;
+    top: 160px;
+    left: 0px;
+}
+
+.export_ch2{
+    position: absolute;
+    top:160px;
+    right: 0px;
+}
+.aa{
+    position: absolute;
+    top: 200px;
+}
