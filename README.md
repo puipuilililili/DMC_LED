@@ -1,5 +1,7 @@
 # DMC_LED
 
+スパゲッティコードの解読者募集中
+
 LED制御用のAPI
 →https://github.com/itisrazza/pybledom
 
