@@ -1,0 +1,297 @@
+@charset "utf-8";
+h1 {
+  	color: #326693;			/* 見出しテキストの色を指定する */
+	padding-left:10px;		/* ボックス内左側の余白を指定する */
+	border-left: 10px solid #31a9ee;	/* ボーダー左側のスタイルを指定する */
+  	border-bottom: 1px dashed #31a9ee; 	/* ボーダー下部のスタイルを指定する */
+}
+/*body font change*/
+body {
+    font-family: 'M PLUS 1p', sans-serif;
+}
+hr{
+    padding-top: 1px;
+    border: none;
+    border-bottom: 3px solid #333;
+}
+
+
+/*色選択用box*/
+.colorSelCh1{
+    position: absolute;
+    top: 80px;
+}
+.ch1ColorSelecter{
+    position: absolute;
+    top: 120px;
+    background-color: #DDDDDD;
+    width:740px;
+    height:65px;
+}
+.colorSelCh2{
+    position: absolute;
+    top: 80px;
+    left: 770px;
+}
+.ch2ColorSelecter{
+    position: absolute;
+    top: 120px;
+    left: 770px;
+    background-color: #DDDDDD;
+    width:740px;
+    height:65px;
+}
+.colorSelCh3{
+    position: absolute;
+    top: 200px;
+}
+.ch3ColorSelecter{
+    position: absolute;
+    top: 240px;
+    background-color: #DDDDDD;
+    width:740px;
+    height:65px;
+}
+.colorSelCh4{
+    position: absolute;
+    top: 200px;
+    left: 770px;
+}
+.ch4ColorSelecter{
+    position: absolute;
+    top: 240px;
+    left: 770px;
+    background-color: #DDDDDD;
+    width:740px;
+    height:65px;
+}
+
+.activeCh{
+   border: solid 0.2rem red !important;; 
+}
+
+[class^="btn"] {
+    border: 2px solid #000000;
+    background-color: #F8F8F8;
+    outline: 0;
+    width: 35px;
+    height: 35px;
+    margin: 3px; 
+    margin-bottom: 7px;
+    position: relative;
+    top : 10px;
+    left: 10px;
+    transition: background 0.s;
+}
+[class^="btn"].active{
+    background-color: #09ff84;
+}
+[class^="btn"].cue{
+    background-color: #ff0000;
+}
+[class^="btn"].loop{
+    background-color: #ffaa00;
+}
+[class^="btn"]:hover{
+    border: 2px #0000ff solid;
+    background: #00fbff;
+}
+
+
+/*------------------------左側（ch1, ch3）------------------------------------------------------------*/
+.ch1{
+    position: absolute;
+    left: 385px;
+    top: 340px;
+    height: 390px;
+    width: 360px;
+}
+.ch3{
+    position: absolute;
+    left: 10px;
+    top: 340px;
+    height: 390px;
+    width: 360px;
+}
+
+/*FILE機能用*/
+.file_left{
+    position: absolute;
+    top: 20px;
+    height: 90px;
+    width: 300px;
+}
+.save_left{
+    position: absolute;
+    bottom: 20px;
+    width: 110px;
+    left: 90px;
+}
+/*BPM用*/
+.BPM1{
+    position: absolute;
+    bottom: 270px;
+}
+/*ループ変更ch1*/
+.Select_loop_1{
+    position: absolute;
+    bottom: 230px;
+    width: 150px;
+    height: 20px;
+}
+/*CUEからのループ*/
+.loopfromcue{
+    position: absolute;
+    top: 10px;
+    left: 180px;
+    width: 70px;
+}
+/*モード変更*/
+.select_mode_1{
+    position: absolute;
+    bottom: 170px;
+    width: 150px;
+    height: 20px;
+}
+/*明るさ調整フェーダー*/
+.brightness_label_ch1{
+    position: absolute;
+    bottom: 0px;
+    left: 210px;
+}
+.brightness_ch1{
+    appearance: none;
+    width: 12px;
+    height: 255px;
+    border: 1px solid #333333;
+    border-radius: 9999px;
+    background: #377494;
+    writing-mode: vertical-rl;
+    direction: rtl;
+    cursor: pointer;
+    position: absolute;
+    bottom: 40px;
+    left: 270px;
+
+} 
+/* ツマミ：Chrome, Safari, Edge用 */
+[class^="brightne"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #333333;
+    border-radius: 9999px;
+    background: #06b6d4;
+    box-shadow: none;
+}  
+/*PLAY/PAUSEボタン*/
+.play_pause1 {
+    all: unset;
+    background-color: #02ff63;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 10px 20px;
+    min-width: 150px;
+    display: flex;
+    justify-content: center;
+    transition: all 0.05s ease-out;
+    position: absolute;
+    bottom: 50px;
+}
+[class^="play_pause"]:hover {
+    background-color: #ff0000;
+}
+
+
+
+
+/*-------------------------右側（ch2, ch4）------------------------------------------------------------*/
+
+.ch2{
+    position: absolute;
+    top: 340px;
+    height: 390px;
+    right: 380px;
+    width: 360px;
+}
+.ch4{
+    position: absolute;
+    top: 340px;
+    height: 390px;
+    right: 5px;
+    width: 360px;
+}
+/*FILE機能用*/
+.file_right{
+    position: absolute;
+    left: 50px;
+    top: 20px;
+    height: 90px;
+    width: 300px;
+}
+.save_right{
+    position: absolute;
+    bottom: 20px;
+    width: 110px;
+    right: 100px;
+}
+/*BPM用*/
+.BPM2{
+    position: absolute;
+    bottom: 270px;
+    right: 20px;
+}
+/*ループ変更ch2*/
+.select_loop_2{
+    position: absolute;
+    bottom: 230px;
+    right : 120px;
+    width: 150px;
+    height: 20px;
+}
+/*モード変更ch2*/
+.select_mode_2{
+    position: absolute;
+    bottom: 170px;
+    right: 85px;
+    width: 150px;
+    height: 20px;
+}
+
+/*明るさ調整フェーダー*/
+.brightness_label_ch2{
+    position: absolute;
+    bottom: 0px;
+    left : 0px;
+}
+.brightness_ch2{
+    appearance: none;
+    width: 12px;
+    height: 255px;
+    border: 1px solid #333333;
+    border-radius: 9999px;
+    background: #377494;
+    writing-mode: vertical-rl;
+    direction: rtl;
+    cursor: pointer;
+    position: absolute;
+    left: 60px;
+    bottom: 40px;
+}
+/*PLAY/PAUSEボタン*/
+.play_pause2 {
+    all: unset;
+    background-color: #02ff63;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 10px 20px;
+    min-width: 150px;
+    display: flex;
+    justify-content: center;
+    transition: all 0.05s ease-out;
+    position: absolute;
+    bottom: 50px;
+    right: 20px;
+} 
+
