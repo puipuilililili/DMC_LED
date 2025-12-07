@@ -10,6 +10,8 @@ beat_end = 16
 chcue = 0 #CUEの偶奇回数判定用
 MasterBpm = 200 #基準BPM値保存用
 
+background_tasks = []
+
 last_ch_state={
     "ch" : 1,
     "BPM": 1,
@@ -41,16 +43,26 @@ app = Quart(__name__)
 @app.before_serving
 async def connect():
     await led.connect()
-    asyncio.create_task(midi_listner())
     asyncio.create_task(osc_server.start())
-    asyncio.create_task(bpm_monitor_task())
+    task1 = asyncio.create_task(midi_listner())
+    task2 = asyncio.create_task(bpm_monitor_task())
+    background_tasks.append(task1)
+    background_tasks.append(task2)
+
 app.secret_key = "dev_secret_key"
 
 bcast = EventBroker(app, url_prefix="/events")
 
 @app.after_serving
 async def disconnect():
+    print("Try to shutdown\n")
+    for task in background_tasks:
+        task.cancel()
+    #タスクが完全終了するまで待つ
+    await asyncio.gather(*background_tasks, return_exceptions=True)
+
     await led.disconnect()
+    print("LED Disconnected")
 
 @app.route('/')
 async def index():
@@ -333,6 +345,5 @@ async def bpm_monitor_task():
         await asyncio.sleep(0)
 
 
-if __name__ == "__main__":    
-    app.run(debug=True)
-
+if __name__ == "__main__":
+    app.run(debug=True, use_reloader=False)
