@@ -3,6 +3,7 @@ from quart_events import EventBroker
 from led_controller import LEDContoller
 from midi import getMidi
 from osc_server import OSCServer
+from bpm_client import BPMClient
 import json
 import asyncio
 led = LEDContoller()
@@ -37,18 +38,35 @@ last_led_state = {
     "brightness": 100
 }
 
+# BPM入力源の選択 ("osc", "http", "both")
+BPM_SOURCE = "http"  # "osc": OSCのみ, "http": HTTPのみ, "both": 両方有効
+
 osc_server = OSCServer(ip = "127.0.0.1", port=7000)
+bpm_client = BPMClient(url = "http://127.0.0.1:17081/params.json", polling_interval=0.1)
 app = Quart(__name__)
 
 @app.before_serving
 async def connect():
     await led.connect()
-    asyncio.create_task(osc_server.start())
-    task1 = asyncio.create_task(midi_listner())
-    task2 = asyncio.create_task(bpm_monitor_task())
-    background_tasks.append(task1)
-    background_tasks.append(task2)
-
+    asyncio.create_task(midi_listner())
+    
+    # BPM入力源に応じて起動
+    if BPM_SOURCE in ["osc", "both"]:
+        asyncio.create_task(osc_server.start())
+        asyncio.create_task(bpm_monitor_task())
+    
+    if BPM_SOURCE in ["http", "both"]:
+        # BPMクライアントのコールバック設定と起動
+        async def on_bpm_update(new_bpm):
+            global MasterBpm
+            MasterBpm = 60000 / new_bpm / 2
+            newBpm = MasterBpm * last_ch_state["BPM"]
+            await led.change_bpm(newBpm)
+            last_led_state["intervalMs"] = newBpm
+            await send_knob_data()
+        
+        bpm_client.on_bpm_change(on_bpm_update)
+        await bpm_client.start()
 app.secret_key = "dev_secret_key"
 
 bcast = EventBroker(app, url_prefix="/events")
@@ -62,7 +80,7 @@ async def disconnect():
     await asyncio.gather(*background_tasks, return_exceptions=True)
 
     await led.disconnect()
-    print("LED Disconnected")
+    await bpm_client.stop()
 
 @app.route('/')
 async def index():
