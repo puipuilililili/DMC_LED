@@ -1,0 +1,6 @@
+aiosc==0.2
+bleak==2.0.0
+matplotlib==3.10.7
+pygame==2.6.1
+quart==0.20.0
+quart_events==0.4.3

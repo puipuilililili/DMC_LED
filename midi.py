@@ -10,15 +10,15 @@ class getMidi:
 
         # 接続されているMIDIデバイスの数を取得
         device_count = pygame.midi.get_count()
-        print(f"接続されているMIDIデバイスの数: {device_count}")
 
         # 各デバイスの情報を表示
         input_device_id = None
         for i in range(device_count):
             device_info = pygame.midi.get_device_info(i)
             print(f"ID: {i}, Info: {device_info}")
+
             # 入力デバイスを探す (device_info[2] == 1 が入力デバイス)
-            if device_info[2] == 1 and input_device_id is None:
+            if device_info[1] == b'LPD8 mk2' and device_info[2] == 1 and input_device_id is None:
                 input_device_id = i
 
         # 入力デバイスが見つかった場合のみ接続
