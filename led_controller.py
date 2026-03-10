@@ -1,7 +1,6 @@
 import os
 import asyncio
 import time
-from matplotlib.colors import to_rgb
 from src import connect_device
 
 
@@ -9,7 +8,7 @@ def run_async_coroutine(coro):
     asyncio.run(coro)  
 
 
-class LEDContoller:
+class LEDController:
     def  __init__(self):
         self.client = None
         self.device = None
@@ -37,11 +36,11 @@ class LEDContoller:
         await self.device.power_off()
         await self.client.disconnect()  
       
-    async def set_color(self, buttons, index, loopStart, loopEnd, intervalMs):
+    async def set_color(self, buttons, index, BPM):
         if self.sequencer:
             await self.sequencer.stop()
             await self.sequencer.load_sequencer(
-                buttons, index, loopStart, loopEnd, intervalMs
+                buttons, index, BPM
             )
             await self.sequencer.start()
 
@@ -75,29 +74,15 @@ class LEDContoller:
             except Exception as e:
                 print(f"[WARN] brightness set error: {e}")
 
-    async def change_bpm(self, intervalMs):
+    async def change_bpm(self, BPM):
         if self.sequencer:
-            self.sequencer.change_bpm(intervalMs)
-
-    async def change_loop(self, loopStart, loopEnd):
-        if self.sequencer:
-            self.sequencer.change_loop(loopStart, loopEnd)
-
-    async def change_loop_from_cue(self,index, loopStart, loopEnd):
-        if self.sequencer:
-            self.sequencer.change_loop_from_cue(index, loopStart, loopEnd)        
-
-    async def set_cue(self, index, loopStart, loopEnd):
-        if self.sequencer:
-            self.sequencer.set_cue(index, loopStart, loopEnd)
+            self.sequencer.change_bpm(BPM)
 
 class ColorSequencer:
-    def __init__(self, device, buttons, index, loopStart, loopEnd, intervalMs):
+    def __init__(self, device, buttons, index, BPM):
         self.buttons = buttons
         self.index = index
-        self.loopStart = loopStart
-        self.loopEnd = loopEnd
-        self.intervalMs = intervalMs
+        self.BPM = BPM
         self.device = device
         self.task = None
         self.stop_event = asyncio.Event()
@@ -116,34 +101,15 @@ class ColorSequencer:
             self.task = None
             print("シーケンスを停止しました。")
     
-    async def load_sequencer(self, buttons, index, loopStart, loopEnd, intervalMs):
+    async def load_sequencer(self, buttons, index, BPM):
         self.buttons = buttons
         self.index = index
-        self.loopStart = loopStart
-        self.loopEnd = loopEnd
-        self.intervalMs = intervalMs
+        self.BPM = BPM
 
             
-    def change_bpm(self, intervalMs):
-        print(f"change bpm, to {30000 / intervalMs}")
-        self.intervalMs = intervalMs
-
-    def change_loop(self, loopStart, loopEnd):
-        print(f"change loop {loopStart} --- {loopEnd}")
-        self.loopStart = loopStart
-        self.loopEnd =loopEnd
-
-    def change_loop_from_cue(self,index, loopStart, loopEnd):
-        print(f"change loop {loopStart} --- {loopEnd}")
-        self.loopStart = loopStart
-        self.loopEnd = loopEnd
-        self.index = index
-
-    def set_cue(self, index, loopStart, loopEnd):
-        print(f"set Cue {index} loopSrat{loopStart} loopEnd{loopEnd}")
-        self.loopStart = loopStart
-        self.loopEnd = loopEnd
-        self.index = index
+    def change_bpm(self, BPM):
+        print(f"change bpm, to {BPM}")
+        self.BPM = BPM
 
     async def run_sequence(self):
         self.stop_event.clear()
@@ -166,13 +132,13 @@ class ColorSequencer:
                 await self.device.set_color(*self.buttons[self.index])
 
             #次の位置
-            if self.index == self.loopEnd :
-                self.index = self.loopStart 
+            if self.index == 15 :
+                self.index = 0 
             else :
                 self.index = (self.index + 1) % len(self.buttons)
 
             #待機時間計算＆待機
-            next_time += self.intervalMs / 1000
+            next_time += 60 / self.BPM
             sleep_time = next_time - time.time()
             if sleep_time > 0:
                 await asyncio.sleep(sleep_time)

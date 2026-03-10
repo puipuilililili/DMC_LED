@@ -11,28 +11,45 @@ eventSource.onmessage = function(event){
     const data = JSON.parse(event.data);
 
     const channels = [channel1, channel2, channel3, channel4];
-    for (const ch of channels) {
-        ch.bpmInput.value = 30000 / data.bpm;
-        ch.intervalMs = data.bpm;
-        ch.brightnessSlider.value = data.brightness;
-    }
-    switch(data.ch){
+    switch(data.data_type){
+        //PADからの入力処理
+        case 0:
+            switch(data.data1){
+                case 1:
+                    channel1.index = 0;
+                    playPause(channel1, channel2, channel3, channel4);
+                    break
+                case 2:
+                    channel2.index = 0;
+                    playPause(channel2, channel1, channel3, channel4);
+                    break
+                case 3:
+                    channel3.index = 0;
+                    playPause(channel3, channel1, channel2, channel4);
+                    break
+                case 4:
+                    channel4.index = 0;
+                    playPause(channel4, channel1, channel2, channel3);
+                    break
+                default:
+            }
+        //Knobからの入力処理
         case 1:
-            channel1.index = 0;
-            playPause(channel1, channel2, channel3, channel4);
-            break
-        case 2:
-            channel2.index = 0;
-            playPause(channel2, channel1, channel3, channel4);
-            break
-        case 3:
-            channel3.index = 0;
-            playPause(channel3, channel1, channel2, channel4);
-            break
-        case 4:
-            channel4.index = 0;
-            playPause(channel4, channel1, channel2, channel3);
-            break
+            switch(data.data1){
+                case 1:
+                    for(const ch of channels){
+                        ch.bpmInput.value = data.bpm;
+                        ch.bpm = data.bpm;
+                        ch.intervalMs = 60 / data.bpm * 1000 / 2;
+                    }
+                    break
+                case 2:
+                    for(const ch of channels){
+                        ch.brightnessSlider.value = data.brightness;
+                    }
+                    break
+                default:
+            }
         default: 
     }
 }
@@ -48,24 +65,16 @@ eventSource.onerror = function(err) {
 
 const channel1 = {
     id: 1,
+    bpm: 120,
     intervalMs: 250,
     colorInterval: null,
     index: 0,
-    previousLoop: 0,
-    isLooping: false,
     mode: 1,
-    loopStart: 0,
-    loopEnd: 16,
     isPlaying: false,
-    cue: 0,
     buttons: document.querySelectorAll('.btn1'),
     modeSelecter: document.getElementById("mode_ch1"),
-    loopSelecter: document.getElementById("loop_ch1"),
-    loopFromCue: document.getElementById("loopFromCue_ch1"),
     playPauseButton: document.getElementById("play_pause1"),
     brightnessSlider: document.getElementById("brightness1"),
-    bpm05: document.getElementById("BPM1/2_ch1"),
-    bpmx2: document.getElementById("BPMx2_ch1"),
     bpmInput: document.getElementById("BPM1"),
     resetButton: document.getElementById("reset_ch1"),
     load: document.getElementById("load_ch1"),
@@ -75,26 +84,18 @@ const channel1 = {
 
 const channel2 = {
     id: 2,
+    bpm: 120,
     intervalMs: 250,
     colorInterval: null,
     index: 0,
-    previousLoop: 0,
-    isLooping: false,
     mode: 1,
-    loopStart: 0,
-    loopEnd: 16,
     isPlaying: false,
-    cue: 0,
     buttons: document.querySelectorAll('.btns2'),
-    loopSelecter: document.getElementById("loop_ch2"),
     modeSelecter: document.getElementById("mode_ch2"),
-    loopFromCue: document.getElementById("loopFromCue_ch2"),
     playPauseButton: document.getElementById("play_pause2"),
     brightnessSlider: document.getElementById("brightness2"),
-    bpm05: document.getElementById("BPM1/2_ch2"),
-    bpmx2: document.getElementById("BPMx2_ch2"),
     bpmInput: document.getElementById("BPM2"),
-    resetButton: document.getElementById("reset_ch1"),
+    resetButton: document.getElementById("reset_ch2"),
     load: document.getElementById("load_ch2"),
     save: document.getElementById("save_ch2"),
     chbox: document.querySelectorAll("[class^=ch2]")
@@ -102,24 +103,16 @@ const channel2 = {
 
 const channel3 = {
     id: 3,
+    bpm: 120,
     intervalMs: 250,
     colorInterval: null,
     index: 0,
-    previousLoop: 0,
-    isLooping: false,
     mode: 1,
-    loopStart: 0,
-    loopEnd: 16,
     isPlaying: false,
-    cue: 0,
     buttons: document.querySelectorAll('.btns3'),
     modeSelecter: document.getElementById("mode_ch3"),
-    loopSelecter: document.getElementById("loop_ch3"),
-    loopFromCue: document.getElementById("loopFromCue_ch3"),
     playPauseButton: document.getElementById("play_pause3"),
     brightnessSlider: document.getElementById("brightness3"),
-    bpm05: document.getElementById("BPM1/2_ch3"),
-    bpmx2: document.getElementById("BPMx2_ch3"),
     bpmInput: document.getElementById("BPM3"),
     resetButton: document.getElementById("reset_ch3"),
     load: document.getElementById("load_ch3"),
@@ -129,24 +122,16 @@ const channel3 = {
 
 const channel4 = {
     id: 4,
+    bpm: 120,
     intervalMs: 250,
     colorInterval: null,
     index: 0,
-    previousLoop: 0,
-    isLooping: false,
     mode: 1,
-    loopStart: 0,
-    loopEnd: 16,
     isPlaying: false,
-    cue: 0,
     buttons: document.querySelectorAll('.btns4'),
     modeSelecter: document.getElementById("mode_ch4"),
-    loopSelecter: document.getElementById("loop_ch4"),
-    loopFromCue: document.getElementById("loopFromCue_ch4"),
     playPauseButton: document.getElementById("play_pause4"),
     brightnessSlider: document.getElementById("brightness4"),
-    bpm05: document.getElementById("BPM1/2_ch4"),
-    bpmx2: document.getElementById("BPMx2_ch4"),
     bpmInput: document.getElementById("BPM4"),
     resetButton: document.getElementById("reset_ch4"),
     load: document.getElementById("load_ch4"),
@@ -154,8 +139,8 @@ const channel4 = {
     chbox: document.querySelectorAll("[class^=ch4]")
 };
 
+//keyboardからの入力
 document.addEventListener("keydown", keyInput);
-
 function keyInput(e) {
     if(e.shiftKey){
         switch (e.code){
@@ -242,6 +227,7 @@ channel4.bpmInput.addEventListener("input", () => bpmChange(channel4));
 function bpmChange(channel){
     if (!channel.bpmInput.value || channel.bpmInput.value <= 25 || channel.bpmInput >= 1000) return; // 入力チェック
     channel.intervalMs = 60 / channel.bpmInput.value * 1000 / 2;
+    channel.bpm = channel.bpmInput.value 
     //拍と拍の間の間隔（ms表記なのでx1000）(画面表記上の一マスは八分音符相当なので/2)
     
     //BPM送信
@@ -257,68 +243,9 @@ function bpmChange(channel){
                 'Content-Type': 'application/json' 
             },
             body: JSON.stringify({
-            bpm: channel.intervalMs
+            bpm: channel.bpm
         })
     });
-    }
-}
-
-//BPM 1/2
-channel1.bpm05.addEventListener("click", () => bpm05(channel1));
-channel2.bpm05.addEventListener("click", () => bpm05(channel2));
-channel3.bpm05.addEventListener("click", () => bpm05(channel3));
-channel4.bpm05.addEventListener("click", () => bpm05(channel4));
-
-function bpm05(channel){
-
-    let bpm05 = 30 / channel.intervalMs * 500;
-    if (bpm05 < 25 || 30 / bpm05 > 401) return; // 入力チェック
-    channel.intervalMs = channel.intervalMs * 2;
-    channel.bpmInput.value /= 2;
-    if(channel.isPlaying == true){
-        clearInterval(channel.colorInterval);
-        channel.colorInterval = setInterval(() => {
-            play(channel);
-        }, channel.intervalMs);
-
-        fetch("/setBpm2", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({
-            bpm: channel.intervalMs
-        })
-    });
-    }
-}
-
-//BPM x 2
-channel1.bpmx2.addEventListener("click", () => bpmx2(channel1));
-channel2.bpmx2.addEventListener("click", () => bpmx2(channel2));
-channel3.bpmx2.addEventListener("click", () => bpmx2(channel3));
-channel4.bpmx2.addEventListener("click", () => bpmx2(channel4));
-
-function bpmx2(channel){
-    let bpmx2 = 30 / channel.intervalMs * 2000 / 2;
-    if (bpmx2 < 25 || bpmx2 > 1001) return; // 入力チェック
-    channel.intervalMs = channel.intervalMs / 2;
-    channel.bpmInput.value *= 2; 
-    if(channel.isPlaying == true){
-        clearInterval(channel.colorInterval);
-        channel.colorInterval = setInterval(() => {
-            play(channel);
-        }, channel.intervalMs);
-
-        fetch("/setBpm2", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({
-            bpm: channel.intervalMs
-        })
-    });   
     }
 }
 
@@ -334,15 +261,18 @@ function playPause(activeChannel, otherChannel1, otherChannel2, otherChannel3){
     //Play → Pause
     if(activeChannel.isPlaying == true){
         stopChannel(activeChannel);
-        removeActiceCh(activeChannel);
+        removeActiveCh(activeChannel);
     }
     //Pause → Play
     else{
-        startChannel(activeChannel, otherChannel1, otherChannel2, otherChannel3);
+        startChannel(activeChannel);
         addActiveCh(activeChannel);
-        removeActiceCh(otherChannel1);
-        removeActiceCh(otherChannel2);
-        removeActiceCh(otherChannel3);
+        stopChannel(otherChannel1);
+        stopChannel(otherChannel2);
+        stopChannel(otherChannel3);
+        removeActiveCh(otherChannel1);
+        removeActiveCh(otherChannel2);
+        removeActiveCh(otherChannel3);
     }
 }
 
@@ -353,7 +283,7 @@ function addActiveCh(channel){
     });
 }
 
-function removeActiceCh(channel){
+function removeActiveCh(channel){
     channel.chbox.forEach(el =>{
         el.classList.remove("activeCh");
     });
@@ -361,40 +291,26 @@ function removeActiceCh(channel){
 
 function stopChannel(channel){
     clearInterval(channel.colorInterval);
+    channel.colorInterval = null;
     channel.playPauseButton.textContent = "Play" ;
     channel.isPlaying = false;
     fetch("/stop",{});
 }
-function startChannel(activeChannel, otherChannel1, otherChannel2, otherChannel3){
-    activeChannel.buttons[activeChannel.index].classList.remove("cue");
-    clearInterval(otherChannel1.colorInterval);
-    clearInterval(otherChannel2.colorInterval);
-    clearInterval(otherChannel3.colorInterval);
-    otherChannel1.colorInterval = null;
-    otherChannel2.colorInterval = null;
-    otherChannel3.colorInterval = null;
+function startChannel(activeChannel){
     clearInterval(activeChannel.colorInterval);
     activeChannel.colorInterval = setInterval(() => {
         play(activeChannel);
     }, activeChannel.intervalMs);
     activeChannel.isPlaying = true;
     activeChannel.playPauseButton.textContent = "Pause";
-    otherChannel1.isPlaying = false
-    otherChannel1.playPauseButton.textContent = "Play";
-    otherChannel2.isPlaying = false
-    otherChannel2.playPauseButton.textContent = "Play";
-    otherChannel3.isPlaying = false
-    otherChannel3.playPauseButton.textContent = "Play";
-    /*各マスのデータ及び、index, loopStart, loopEnd送信*/
+    /*各マスのデータ及び、index送信*/
     data = {}
     for(i = 0; i < beat_end ; i++){
         data[i] = activeChannel.buttons[i].value;
         //alert(activeChannel.buttons[i].value);
     }
     data[16] = activeChannel.index
-    data[17] = activeChannel.loopStart
-    data[18] = activeChannel.loopEnd
-    data[19] = activeChannel.intervalMs
+    data[17] = activeChannel.bpm
     fetch("/setColor", {
         method: "POST",
         headers: {
@@ -403,120 +319,6 @@ function startChannel(activeChannel, otherChannel1, otherChannel2, otherChannel3
         body: JSON.stringify(data)
     });
 
-}
-
-channel1.loopSelecter.addEventListener("change", () => loopSetting(channel1));
-channel2.loopSelecter.addEventListener("change", () => loopSetting(channel2));
-channel3.loopSelecter.addEventListener("change", () => loopSetting(channel3));
-channel4.loopSelecter.addEventListener("change", () => loopSetting(channel4));
-channel1.loopFromCue.addEventListener("click", () => loopSetFromCue(channel1));
-channel2.loopFromCue.addEventListener("click", () => loopSetFromCue(channel2));
-channel3.loopFromCue.addEventListener("click", () => loopSetFromCue(channel3));
-channel4.loopFromCue.addEventListener("click", () => loopSetFromCue(channel4));
-
-function loopSetting(channel){
-    if(channel.loopSelecter.value != channel.previousLoop){
-        loopReset(channel);
-
-        if(Number(channel.loopSelecter.value) == 0){                    
-            channel.isLooping = false;
-            channel.buttons[channel.loopStart].classList.remove("loop");
-            channel.buttons[channel.loopEnd].classList.remove("loop");    
-            channel.loopStart = 0;
-            channel.loopEnd = beat_end;
-          }
-        else if(Number(channel.loopSelecter.value) == 64){
-        }
-        else{
-            channel.isLooping = true;
-            
-            channel.loopStart = channel.index;
-            channel.loopEnd = channel.index + Number(channel.loopSelecter.value) - 1;
-            if(channel.loopEnd > beat_end){
-                for(let j = channel.loopStart; j <= beat_end; j ++){                
-                    channel.buttons[j].classList.add("loop");
-                }
-                channel.loopEnd = beat_end - channel.loopEnd;
-                for(let j = 0; j <= channel.loopEnd; j ++){                
-                    channel.buttons[j].classList.add("loop");
-                }                
-            }
-            else{
-
-                for(let j = channel.loopStart; j <= channel.loopEnd; j ++){                
-                    channel.buttons[j].classList.add("loop");
-                }
-            }
-        }
-        channel.previousLoop = channel.loopSelecter.value;
-        /*ループデータの送信*/
-        fetch("/setLoop", {
-            method: "POST",
-            headers: {
-               'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({
-                loopStart: channel.loopStart,
-                loopEnd: channel.loopEnd
-            })
-        });
-    }
-}
-
-function loopSetFromCue(channel){
-    loopReset(channel);
-    channel.isLooping = true;
-    channel.loopStart = channel.cue;
-    channel.loopEnd = channel.index - 1;
-    channel.index = channel.loopStart;
-  
-    if(channel.loopEnd > beat_end){
-        for(let j = channel.loopStart; j <= beat_end; j ++){                
-            channel.buttons[j].classList.add("loop");
-        }
-        channel.loopEnd -= beat_end;
-        for(let j = 0; j <= channel.loopEnd; j ++){                
-            channel.buttons[j].classList.add("loop");
-        }                
-    }
-    else{
-        for(let j = channel.loopStart; j <= channel.loopEnd; j ++){                
-            channel.buttons[j].classList.add("loop");
-        }
-    }
-    channel.previousLoop = 64;
-    channel.loopSelecter.value = 64;
-    fetch("/setLoopFromCue", {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify({
-            index: index,
-            loopStart: channel.loopStart,
-            loopEnd: channel.loopEnd
-        })
-    })
-
-}
-
-//ループリセット用関数
-function loopReset(channel){
-    //ループが64小節超えてない時のループリセット
-    if(channel.loopEnd > channel.loopStart){ 
-        for(let i = channel.loopStart ; i < channel.loopEnd ; i++){
-            channel.buttons[i].classList.remove("loop");
-        } 
-    }
-    //ループが64小節を超えている時のループリセット
-    else{
-        for(let i = 0 ; i < channel.loopEnd ; i++){
-            channel.buttons[i].classList.remove("loop");
-        }
-        for(let i = channel.loopStart ; i < channel.buttons.length ; i++){
-            channel.buttons[i].classList.remove("loop");
-        }
-     }
 }
 
 //mode変更
@@ -562,7 +364,7 @@ channel3.brightnessSlider.addEventListener("input", function(){
     this.style.background = `linear-gradient(0deg, ${activeColor} ${ratio}%, ${inactiveColor} ${ratio}%)`;
     changeBrightness(channel3);
 });
-channel3.brightnessSlider.addEventListener("input", function(){
+channel4.brightnessSlider.addEventListener("input", function(){
     const ratio = (this.value - this.min) / (this.max - this.min) * 100;
     this.style.background = `linear-gradient(0deg, ${activeColor} ${ratio}%, ${inactiveColor} ${ratio}%)`;
     changeBrightness(channel3);
@@ -583,125 +385,20 @@ function changeBrightness(channel){
     }
 };
 
-/*CUE設定*/
-channel1.buttons.forEach(function(button, boxNumber){
-    button.addEventListener("click", () => cueSet(channel1, boxNumber))
-});
-channel2.buttons.forEach(function(button, boxNumber){
-    button.addEventListener("click", () => cueSet(channel2, boxNumber))
-});
-channel3.buttons.forEach(function(button, boxNumber){
-    button.addEventListener("click", () => cueSet(channel3, boxNumber))
-});
-channel4.buttons.forEach(function(button, boxNumber){
-    button.addEventListener("click", () => cueSet(channel4, boxNumber))
-});
-
-function cueSet(channel, boxNumber){
-    if(channel.index > 0 ){
-        channel.buttons[channel.index - 1].classList.remove("active");
-    }
-    channel.buttons[channel.index].classList.remove("cue");
-    //ループ外にCUEを設定したときの処理
-    if(boxNumber < channel.loopStart || channel.loopEnd < boxNumber){
-        //ループが最大小節数を超えてない時のループリセット
-        if(channel.loopEnd > channel.loopStart){                            
-            for(let i = channel.loopStart ; i <= channel.loopEnd ; i++){
-                channel.buttons[i].classList.remove("loop");
-            }
-        }
-        //ループが最大小節を超えている時のループリセット
-        else{
-            for(let i = 0 ; i <= channel.loopEnd ; i++){
-                channel.buttons[i].classList.remove("loop");
-            }
-            for(let i = channel.loopStart ; i < channel.buttons.length ; i++){
-                channel.buttons[i].classList.remove("loop");
-            }
-        }
-        channel.loopStart = 0;
-        channel.loopEnd = beat_end;
-        channel.isLooping = false;
-        channel.previousLoop = false;
-        channel.loopSelecter.value = "0";
-    }
-    channel.index = boxNumber;
-    if(channel.isPlaying == true){
-        clearInterval(channel.colorInterval);
-        channel.colorInterval = setInterval(() => play(channel), channel.intervalMs);
-
-        fetch("/setIndex", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                index:  boxNumber,
-                loopStart: channel.loopStart,
-                loopEnd: channel.loopEnd
-            })
-        });
-    }
-    else{
-        channel.buttons[channel.index].classList.remove('loop');
-        channel.buttons[channel.index].classList.add('cue');
-    }
-    channel.cue = channel.index;
-
-};
-
 //play関数
 function play(channel){
     channel.buttons[channel.index].classList.add('active'); // 緑に塗る
-    //ループしている時
-    if(channel.isLooping){                             
-        if(channel.index > 0){
-            channel.buttons[channel.index - 1].classList.remove("active");
-        }
-        channel.buttons[channel.index].classList.remove("loop");
-        //ループが最大小節数を超えていない時
-        if(channel.loopEnd > channel.loopStart){        
-            if(channel.index > channel.loopStart){
-                channel.buttons[channel.index - 1].classList.remove('active'); // 元の色に戻す
-                channel.buttons[channel.index - 1].classList.add('loop');
-            }
-            else{
-                channel.buttons[channel.loopEnd].classList.remove('active');
-                channel.buttons[channel.loopEnd].classList.add('loop');
-            }
-        }
-        //ループが最大小節数を超えているとき
-        else{
-            if(channel.index == 0){
-                channel.buttons[channel.buttons.length - 1].classList.remove('active');
-                channel.buttons[channel.buttons.length - 1].classList.add('loop');
-            }
-            else if(channel.index == channel.loopStart){
-                channel.buttons[channel.loopEnd].classList.remove('active');
-                channel.buttons[channel.loopEnd].classList.add('loop');
-            }
-            else{
-                channel.buttons[channel.index - 1].classList.remove('active'); // 元の色に戻す
-                channel.buttons[channel.index - 1].classList.add('loop');
-            }
-        }
+    if(channel.index > 0){
+        channel.buttons[channel.index - 1].classList.remove('active'); // 元の色に戻す
     }
-    //ループなしの場合
     else{
-        if(channel.index > 0){
-            channel.buttons[channel.index - 1].classList.remove('active'); // 元の色に戻す
-        }
-        else{
-            channel.buttons[channel.buttons.length - 1].classList.remove('active');
-        }
+        channel.buttons[channel.buttons.length - 1].classList.remove('active');
     }
+
 
     //現在位置を+1
     channel.index++ ;
     if(channel.index >= beat_end){
         channel.index = 0;
-    }
-    else if(channel.index ==  channel.loopEnd + 1){
-        channel.index = channel.loopStart;
     }
 }
