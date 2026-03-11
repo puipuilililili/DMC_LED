@@ -77,7 +77,6 @@ async def set_color():
         buttons[i][2] = int(color[5:7], 16)       
     index = int(data.get("16"))
     bpm = float(data.get("17"))
-    state.MasterBpm = bpm
 
     state.last_led_state["bpm"] = bpm
 
@@ -89,7 +88,6 @@ async def set_color():
 async def set_bpm():
     data = await request.get_json()
     bpm = float(data.get("bpm"))
-    state.MasterBpm = bpm
     await state.led.change_bpm(bpm)
     return jsonify({})
 
