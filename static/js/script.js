@@ -9,7 +9,6 @@ const eventSource = new EventSource("/sse");
 
 eventSource.onmessage = function(event){
     const data = JSON.parse(event.data);
-
     const channels = [channel1, channel2, channel3, channel4];
     switch(data.data_type){
         //PADからの入力処理
@@ -31,24 +30,32 @@ eventSource.onmessage = function(event){
                     channel4.index = 0;
                     playPause(channel4, channel1, channel2, channel3);
                     break
+                case 5:
+                    for(const ch of channels){
+                        stopChannel(ch);
+                        removeActiveCh(ch);
+                    }
                 default:
             }
         //Knobからの入力処理
         case 1:
-            switch(data.data1){
+            //data1はどのノブの入力か？
+            //data2はノブの値
+            knob_id = data.data1
+            knob_value = data.data2
+            switch(knob_id){
+                case 0:
+                    for(const ch of channels){
+                        ch.bpmInput.value = knob_value;
+                        ch.bpm = knob_value;
+                        ch.intervalMs = 60 / knob_value * 1000 / 2;
+                    }
+                    break
                 case 1:
                     for(const ch of channels){
-                        ch.bpmInput.value = data.bpm;
-                        ch.bpm = data.bpm;
-                        ch.intervalMs = 60 / data.bpm * 1000 / 2;
+                        ch.brightnessSlider.value = knob_value;
                     }
                     break
-                case 2:
-                    for(const ch of channels){
-                        ch.brightnessSlider.value = data.brightness;
-                    }
-                    break
-                default:
             }
         default: 
     }
@@ -258,6 +265,7 @@ channel4.playPauseButton.addEventListener("click", () => playPause(channel4, cha
 
 
 function playPause(activeChannel, otherChannel1, otherChannel2, otherChannel3){
+    const channels = [otherChannel1, otherChannel2, otherChannel3];
     //Play → Pause
     if(activeChannel.isPlaying == true){
         stopChannel(activeChannel);
@@ -267,12 +275,10 @@ function playPause(activeChannel, otherChannel1, otherChannel2, otherChannel3){
     else{
         startChannel(activeChannel);
         addActiveCh(activeChannel);
-        stopChannel(otherChannel1);
-        stopChannel(otherChannel2);
-        stopChannel(otherChannel3);
-        removeActiveCh(otherChannel1);
-        removeActiveCh(otherChannel2);
-        removeActiveCh(otherChannel3);
+        for(const ch of channels){
+            stopChannel(ch);
+            removeActiveCh(ch);
+        }
     }
 }
 
@@ -320,7 +326,7 @@ function startChannel(activeChannel){
     });
 
 }
-
+/*
 //mode変更
 channel1.modeSelecter.addEventListener("change", () => modeSetting(channel1));
 channel2.modeSelecter.addEventListener("change", () => modeSetting(channel2));
@@ -335,7 +341,7 @@ function modeSetting(channel){
     else if(channel.modeSelecter.value == 'color_fade'){
         channel.mode = 2;
     }
-    /*モードデータ送信*/
+    //モードデータ送信
     fetch('/setMode', {
         method: "POST",
         headers: {
@@ -346,6 +352,7 @@ function modeSetting(channel){
         })
     });
 };
+*/
 
 
 /*明るさスライダー*/ 

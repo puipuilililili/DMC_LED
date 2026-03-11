@@ -33,12 +33,13 @@ async def PAD(value):
             await send_data(0, 4, 0)
         case 40:    #white
             state.last_led_state["white"] = 1
-            await send_data(0, 5, 0)
+            white_bpm = state.MasterBpm * state.last_led_state["white_multiplier"]
+            await state.led.set_color(state.white_color, 0, white_bpm)
         case _:
             print("other")
 
 #上段左一番目ノブからの入力(白色のBPM変更)
-async def BPM_Change2(value):
+async def BPM_Change_white(value):
     BPM_MULTIPLIER_LIST = [
         (32, 0),
         (64, 1),
@@ -76,7 +77,6 @@ async def BPM_Change(value):
             state.last_led_state["multiplier"] = multiplier
             newBpm = state.MasterBpm * multiplier
             break
-    state.last_led_state["BPM"] = newBpm
     await state.led.change_bpm(newBpm)
     await send_data(1, 0, newBpm)
 
@@ -93,14 +93,14 @@ async def midi_listner():
 
     BPM = 40
     BRIGHTNESS = 41
-    BPM2 = 36
+    BPM_FOR_WHITE = 36
 
     midiSignal = midi.getMidi()
     midiSignal.connect()
     control_map = {
         BPM : BPM_Change,
         BRIGHTNESS : BRIGHTNESS_CHANGE,
-        BPM2: BPM_Change2,
+        BPM_FOR_WHITE: BPM_Change_white,
     }
 
     while True:
@@ -135,8 +135,7 @@ async def bpm_monitor_task():
                 newBpm = state.MasterBpm * state.last_led_state["white_multiplier"]
             else:
                 newBpm = state.MasterBpm * state.last_led_state["multiplier"]
+                await send_data(1, 0, newBpm)
             await state.led.change_bpm(newBpm)
-            state.last_led_state["BPM"] = newBpm
-            await send_knob_data()
 
         await asyncio.sleep(0)
