@@ -28,7 +28,7 @@ class LEDController:
         
         if self.device and self.client:
             self.sequencer = ColorSequencer(
-                self.device, [], 0, 0, 15, 500
+                self.device, [], 0, 140
             )
             asyncio.create_task(self._brightness_task())
     
@@ -115,10 +115,20 @@ class ColorSequencer:
         self.stop_event.clear()
         WHITE = [255, 255, 255] #白なら前のボックスのやつを継続
         BLACK = [0, 0, 0] #黒なら暗転
+        PAUSE_COLOR = [254, 255, 255]
         previous_color = WHITE  # 初期化
         next_time = time.time()
         while not self.stop_event.is_set():
-
+            #BPMが0のときは白
+            if self.BPM == 0:
+                await self.device.set_color(*PAUSE_COLOR)
+                #BPMが0の間はここにとどまる
+                while self.BPM == 0:
+                    if self.stop_event.is_set():
+                        return
+                    await asyncio.sleep(0.1)
+                next_time = time.time()
+                continue
             # 色変更
             if self.buttons[self.index] == BLACK:
                 await self.device.set_color(1, 1, 1)#暗転               
@@ -135,10 +145,10 @@ class ColorSequencer:
             if self.index == 15 :
                 self.index = 0 
             else :
-                self.index = (self.index + 1) % len(self.buttons)
+                self.index = self.index + 1
 
             #待機時間計算＆待機
-            next_time += 60 / self.BPM
+            next_time += 60 / self.BPM / 2
             sleep_time = next_time - time.time()
             if sleep_time > 0:
                 await asyncio.sleep(sleep_time)

@@ -32,10 +32,13 @@ eventSource.onmessage = function(event){
                     break
                 case 5:
                     for(const ch of channels){
-                        stopChannel(ch);
-                        removeActiveCh(ch);
+                        if (ch.isPlaying) {
+                            removeActiveCh(ch);
+                        }
                     }
+                    break
                 default:
+                    break
             }
         //Knobからの入力処理
         case 1:
@@ -54,10 +57,12 @@ eventSource.onmessage = function(event){
                 case 1:
                     for(const ch of channels){
                         ch.brightnessSlider.value = knob_value;
+                        ch.brightnessSlider.dispatchEvent(new Event('input'));
                     }
                     break
             }
         default: 
+            break
     }
 }
 
@@ -268,7 +273,7 @@ function playPause(activeChannel, otherChannel1, otherChannel2, otherChannel3){
     const channels = [otherChannel1, otherChannel2, otherChannel3];
     //Play → Pause
     if(activeChannel.isPlaying == true){
-        stopChannel(activeChannel);
+        stopChannel();
         removeActiveCh(activeChannel);
     }
     //Pause → Play
@@ -276,8 +281,9 @@ function playPause(activeChannel, otherChannel1, otherChannel2, otherChannel3){
         startChannel(activeChannel);
         addActiveCh(activeChannel);
         for(const ch of channels){
-            stopChannel(ch);
-            removeActiveCh(ch);
+            if (ch.isPlaying) {
+                removeActiveCh(ch);
+            }
         }
     }
 }
@@ -290,16 +296,16 @@ function addActiveCh(channel){
 }
 
 function removeActiveCh(channel){
+    clearInterval(channel.colorInterval);
+    channel.colorInterval = null;
+    channel.playPauseButton.textContent = "Play" ;
+    channel.isPlaying = false;
     channel.chbox.forEach(el =>{
         el.classList.remove("activeCh");
     });
 }
 
-function stopChannel(channel){
-    clearInterval(channel.colorInterval);
-    channel.colorInterval = null;
-    channel.playPauseButton.textContent = "Play" ;
-    channel.isPlaying = false;
+function stopChannel(){
     fetch("/stop",{});
 }
 function startChannel(activeChannel){

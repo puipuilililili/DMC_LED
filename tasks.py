@@ -20,21 +20,29 @@ async def send_data(data_type, data1, data2):
 async def PAD(value):
     match value:
         case 36:    #ch3
-            state.last_led_state["white"] = 0
+            state.last_led_state["white_is_playing"] = 0
             await send_data(0, 3, 0)
         case 37:    #ch1
-            state.last_led_state["white"] = 0
+            state.last_led_state["white_is_playing"] = 0
             await send_data(0, 1, 0)
         case 38:    #ch2
-            state.last_led_state["white"] = 0
+            state.last_led_state["white_is_playing"] = 0
             await send_data(0, 2, 0)
         case 39:    #ch4
-            state.last_led_state["white"] = 0
+            state.last_led_state["white_is_playing"] = 0
             await send_data(0, 4, 0)
         case 40:    #white
-            state.last_led_state["white"] = 1
+            #Pause → Play
             white_bpm = state.MasterBpm * state.last_led_state["white_multiplier"]
-            await state.led.set_color(state.white_color, 0, white_bpm)
+            if state.last_led_state["white_is_playing"] == 0:
+                state.last_led_state["white_is_playing"] = 1
+                await state.led.set_color(state.white_color, 0, white_bpm)
+                await send_data(0, 5, 0)
+            #Play → Pause
+            else:
+                state.last_led_state["white_is_playing"] = 0
+                await state.led.set_color(state.pure_white_color, 0, white_bpm)
+
         case _:
             print("other")
 
@@ -43,30 +51,28 @@ async def BPM_Change_white(value):
     BPM_MULTIPLIER_LIST = [
         (32, 0),
         (64, 1),
-        (96, 1 / 2),
-        (128, 1 / 4)
+        (96, 2),
+        (128, 4)
     ]
     
     midi_value = value
     newWhiteBpm = state.MasterBpm
-
     for threshold, multiplier in BPM_MULTIPLIER_LIST:
         if midi_value <= threshold:
             state.last_led_state["white_multiplier"] = multiplier
             newWhiteBpm = state.MasterBpm * multiplier
             break
-    
-    if state.last_led_state["white"] == 1:
+    if state.last_led_state["white_is_playing"] == 1:
         await state.led.change_bpm(newWhiteBpm)
 
 #下段左一番目ノブからの入力（BPM変更）
 async def BPM_Change(value):
     BPM_MULTIPLIER_LIST = [
-        (20, 4),
-        (40, 2),
+        (20, 1/ 4),
+        (40, 1 / 2),
         (80, 1),
-        (102, 1 / 2),
-        (127, 1 / 4)
+        (102, 2),
+        (127, 4)
     ]
 
     midi_value = value
@@ -77,7 +83,8 @@ async def BPM_Change(value):
             state.last_led_state["multiplier"] = multiplier
             newBpm = state.MasterBpm * multiplier
             break
-    await state.led.change_bpm(newBpm)
+    if state.last_led_state["white_is_playing"] == 0:
+        await state.led.change_bpm(newBpm)
     await send_data(1, 0, newBpm)
 
 #下段左から二番目のノブの入力(明るさ変更)
@@ -131,7 +138,7 @@ async def bpm_monitor_task():
             last_processed_bpm = current_bpm
             #一色当たりの時間
             state.MasterBpm = last_processed_bpm
-            if state.last_led_state["white"]==1:
+            if state.last_led_state["white_is_playing"]==1:
                 newBpm = state.MasterBpm * state.last_led_state["white_multiplier"]
             else:
                 newBpm = state.MasterBpm * state.last_led_state["multiplier"]
