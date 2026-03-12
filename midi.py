@@ -33,3 +33,4 @@ class getMidi:
             # MIDI入力を取得
             midi_events = self.i.read(4)
             return midi_events
+    

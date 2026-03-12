@@ -117,7 +117,7 @@ hr{
 /*FILE機能用*/
 .file_left{
     position: absolute;
-    top: 20px;
+    top: 60px;
     height: 90px;
     width: 300px;
 }
@@ -130,26 +130,12 @@ hr{
 /*BPM用*/
 .BPM1{
     position: absolute;
-    bottom: 270px;
-}
-/*ループ変更ch1*/
-.Select_loop_1{
-    position: absolute;
-    bottom: 230px;
-    width: 150px;
-    height: 20px;
-}
-/*CUEからのループ*/
-.loopfromcue{
-    position: absolute;
-    top: 10px;
-    left: 180px;
-    width: 70px;
+    bottom: 200px;
 }
 /*モード変更*/
 .select_mode_1{
     position: absolute;
-    bottom: 170px;
+    bottom: 160px;
     width: 150px;
     height: 20px;
 }
@@ -226,7 +212,7 @@ hr{
 .file_right{
     position: absolute;
     left: 50px;
-    top: 20px;
+    top: 60px;
     height: 90px;
     width: 300px;
 }
@@ -239,21 +225,13 @@ hr{
 /*BPM用*/
 .BPM2{
     position: absolute;
-    bottom: 270px;
+    bottom: 200px;
     right: 20px;
-}
-/*ループ変更ch2*/
-.select_loop_2{
-    position: absolute;
-    bottom: 230px;
-    right : 120px;
-    width: 150px;
-    height: 20px;
 }
 /*モード変更ch2*/
 .select_mode_2{
     position: absolute;
-    bottom: 170px;
+    bottom: 160px;
     right: 85px;
     width: 150px;
     height: 20px;
