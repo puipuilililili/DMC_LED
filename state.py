@@ -10,7 +10,8 @@ class AppState:
             "multiplier": 1,
             "white_multiplier": 1,
             "white_is_playing": 0,
-            "brightness": 100
+            "brightness": 100,
+            "cross_fade_7color" : 50
         }
         self.white_color = [([254, 255, 255] if i % 2 == 0 else [0, 0, 0]) for i in range(16)]
         self.pure_white_color = [[254, 255, 255] for _ in range(16)]

@@ -1,4 +1,5 @@
 from state import state
+from src.device import Effects
 import asyncio
 import midi
 
@@ -8,6 +9,7 @@ async def send_data(data_type, data1, data2):
     data_type 0はパッドデータ
     data_type 1はノブデータ
     data1はノブデータの場合のどのノブのデータか
+            パッドの場合どのパッドが押されたか
     data2はノブのデータ
     data1, data2は空欄の場合は0を入れる
     '''
@@ -42,6 +44,15 @@ async def PAD(value):
             else:
                 state.last_led_state["white_is_playing"] = 0
                 await state.led.set_color(state.pure_white_color, 0, white_bpm)
+        case 42:
+            state.last_led_state["white_is_playing"] = 0
+            await send_data(0, 5, 0)
+            await state.led.set_effect(Effects.CROSSFADE_RED_GREEN_BLUE_YELLOW_CYAN_MAGENTA_WHITE)
+        case 43:
+            state.last_led_state["white_is_playing"] = 0
+            await send_data(0, 5, 0)
+            await state.led.set_effect(Effects.BLINK_RED_GREEN_BLUE_YELLOW_CYAN_MAGENTA_WHITE)
+
 
         case _:
             print("other")
@@ -91,6 +102,7 @@ async def BPM_Change(value):
 async def BRIGHTNESS_CHANGE(value):
     brightness = int(value / 1.27)
     state.last_led_state["brightness"] = brightness
+    print("brightness change")
     await state.led.brightnessChange(brightness)
     await send_data(1, 1, brightness)
 
@@ -119,7 +131,7 @@ async def midi_listner():
                 
             if command in (0x90,):
                 value = mididata[0][0][1]
-                if 36 <= value <= 40:
+                if 36 <= value <= 43:
                     await PAD(value)
 
             elif command in (0xB0,):         

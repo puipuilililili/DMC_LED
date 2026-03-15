@@ -44,27 +44,30 @@ class LEDController:
             )
             await self.sequencer.start()
 
-
+    async def set_effect(self, effect):
+        if self.sequencer:
+            await self.sequencer.stop()
+            await self.device.set_effect(effect)
+    
     async def stop_color(self):
         if self.sequencer:
             #self.sequencer(ColorSequencer)内のstopを呼び出して停止
             await self.sequencer.stop() 
 
     async def brightnessChange(self, brightness):
-        print(f"change brightness to {brightness}")
         self._brightness = int(brightness)
         self._brightness_event.set()
 
     async def _brightness_task(self):
         """明るさをリアルタイム反映 + 送信レート制御"""
-        MIN_INTERVAL = 0.020  # 20ms
+        MIN_INTERVAL = 0.010  # 10ms
         while True:
             await self._brightness_event.wait()
             self._brightness_event.clear()
             now = asyncio.get_event_loop().time()
             elapsed = now - self._last_brightness_send
 
-            # 前回送信から20ms未満なら待つ
+            # 前回送信から10ms未満なら待つ
             if elapsed < MIN_INTERVAL:
                 await asyncio.sleep(MIN_INTERVAL - elapsed)
 

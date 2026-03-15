@@ -55,16 +55,21 @@ class BleLedDevice:
         """
         Uses the Bluetooth client as a LED controller.
         """
-
+        print("Initializing BleLedDevice...")
         characteristics = []
         for service in bt_client.services:
             for characteristic in service.characteristics:
                 if characteristic.uuid == BLEDOM_CHARACTERISTIC:
                     characteristics.append(characteristic)
+        
+        print(f"Found BLEDOM characteristics: {characteristics}")
+        if not characteristics:
+            raise ValueError("BLEDOM characteristic not found.")
 
         device = BleLedDevice(bt_client, characteristics)
         await device.sync_time()
         await device.power_on()
+        print("BleLedDevice initialized and powered on.")
         return device
 
     def _characteristic(self):

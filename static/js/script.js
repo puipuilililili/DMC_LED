@@ -40,6 +40,7 @@ eventSource.onmessage = function(event){
                 default:
                     break
             }
+            break;
         //Knobからの入力処理
         case 1:
             //data1はどのノブの入力か？
