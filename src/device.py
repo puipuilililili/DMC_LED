@@ -148,7 +148,7 @@ class BleLedDevice:
 
         `value` is expected to be an integer between 0 and 100 (inclusive).
         """
-
+        print(f"set speed {value}")
         await self.generic_command(0x02, min(value, 100), 0, 0, 0)
 
     async def set_schedule_on(self,

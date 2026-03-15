@@ -47,8 +47,11 @@ class LEDController:
     async def set_effect(self, effect):
         if self.sequencer:
             await self.sequencer.stop()
-            await self.device.set_effect(effect)
-    
+        await self.device.set_effect(effect)
+        
+    async def set_effect_speed(self, speed):
+        await self.device.set_effect_speed(speed)
+
     async def stop_color(self):
         if self.sequencer:
             #self.sequencer(ColorSequencer)内のstopを呼び出して停止
